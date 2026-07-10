@@ -6,7 +6,11 @@ function App() {
 
   return (
     <>
-     <header >
+    <div style={{display:"flex", justifyContent:"center", alignItems:"center", height:"100vh"}}>
+      <h1>iMessage</h1>
+    </div>
+    <div>
+      <header >
         <Show when="signed-out">
           <SignInButton mode="modal" />
           <SignUpButton mode="modal" />
@@ -15,6 +19,8 @@ function App() {
           <UserButton />
         </Show>
       </header>
+    </div>
+     
     </>
   )
 }

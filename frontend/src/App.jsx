@@ -6,7 +6,7 @@ function App() {
 
   return (
     <>
-    <div style={{display:"flex", justifyContent:"center", alignItems:"center", height:"100vh"}}>
+    <div className="text-3xl font-bold underline justify-center">
       <h1>iMessage</h1>
     </div>
     <div>

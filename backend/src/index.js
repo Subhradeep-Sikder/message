@@ -35,5 +35,10 @@ if ( fs.existsSync(publicDir)) {
 app.listen(PORT, () => {
     connectDB();
     console.log(`Server is running on port ${PORT}`);
+
+    //for running cron job to send GET request to health endpoint every 14 minutes
+    if(process.env.NODE_ENV === "production"){
+        job.start()
+    }
 });
 

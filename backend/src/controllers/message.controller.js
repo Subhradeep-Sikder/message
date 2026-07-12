@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import { hasImageKitConfig, uploadChatMedia } from "../lib/imagekit.js";
 import { getReceiverSocketId, io } from "../lib/socket.js";
+import mongoose from "mongoose";
 
 export async function getUsersForSidebar(req, res) {
     try{
@@ -108,6 +109,28 @@ export async function sendMessage(req, res) {
     res.status(201).json(newMessage);
   } catch (error) {
     console.error("Error in sendMessage:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export async function searchUsers(req, res) {
+  try {
+    const { query } = req.query;
+    if (!query) {
+      return res.status(200).json([]);
+    }
+
+    const loggedInUserId = req.user._id;
+
+    // Find the user by exact email match (case-insensitive) excluding the logged-in user
+    const users = await User.find({
+      _id: { $ne: loggedInUserId },
+      email: query.trim().toLowerCase()
+    }).select("-clerkId");
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error in searchUsers:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 }

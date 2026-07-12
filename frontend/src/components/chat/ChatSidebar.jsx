@@ -5,8 +5,10 @@ import { APP_NAME, AppLogo } from "../AppLogo";
 import { UserButton } from "@clerk/react";
 
 import { SearchField, Tabs } from "@heroui/react";
-import { MessageSquareIcon, UsersIcon } from "lucide-react";
+import { MessageSquareIcon, UsersIcon, Loader2Icon } from "lucide-react";
 import { ConversationRow } from "./ConversationRow";
+import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 function mapUserForList(user, onlineUsers) {
   return {
@@ -40,13 +42,28 @@ function ChatSidebar() {
   const setActiveConversationId = useChatStore((state) => state.setActiveConversationId);
 
   const onlineUsers = useAuthStore((state) => state.onlineUsers);
+  const authUser = useAuthStore((state) => state.authUser);
+
+  const searchResults = useChatStore((state) => state.searchResults);
+  const isSearching = useChatStore((state) => state.isSearching);
+  const searchUsers = useChatStore((state) => state.searchUsers);
 
   const { activeConversationId, isLargeScreen } = useSelectedConversation();
+
+  useEffect(() => {
+    if (sidebarTab === "users") {
+      const delayDebounceFn = setTimeout(() => {
+        searchUsers(searchQuery);
+      }, 300);
+
+      return () => clearTimeout(delayDebounceFn);
+    }
+  }, [searchQuery, sidebarTab, searchUsers]);
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
 
   const conversationUsers = conversations.map((user) => mapUserForList(user, onlineUsers));
-  const allUsers = users.map((user) => mapUserForList(user, onlineUsers));
+  const searchedUsersList = searchResults.map((user) => mapUserForList(user, onlineUsers));
 
   const filteredConversations = normalizedSearchQuery
     ? conversationUsers.filter((conversation) =>
@@ -54,17 +71,13 @@ function ChatSidebar() {
       )
     : conversationUsers;
 
-  const filteredUsers = normalizedSearchQuery
-    ? allUsers.filter((user) => user.name.toLowerCase().includes(normalizedSearchQuery))
-    : allUsers;
-
   return (
     <aside
       className={`w-full shrink-0 flex-col overflow-hidden border-r border-border lg:w-72 ${
         !isLargeScreen && activeConversationId ? "hidden lg:flex" : "flex"
       }`}
     >
-      <div className="shrink-0 border-b border-border px-2 pb-2 pt-2.5 sm:px-3 sm:pt-3">
+      <div className="shrink-0 border-b border-border px-2 pb-2.5 pt-2.5 sm:px-3 sm:pt-3">
         <div className="flex items-center gap-2 px-0.5 sm:gap-2.5 sm:px-1">
           <AppLogo size={32} className="size-8 shrink-0 rounded-[9px] sm:size-8.5" alt="" />
           <p className="flex-1 truncate text-lg font-bold tracking-tight sm:text-[22px]">
@@ -136,15 +149,31 @@ function ChatSidebar() {
         </Tabs.Panel>
 
         <Tabs.Panel id="users" className="flex-1 overflow-x-hidden overflow-y-auto outline-none">
-          {filteredUsers.length === 0 ? (
-            <p className="px-4 py-6 text-center text-sm text-muted">No people match your search.</p>
+          {isSearching ? (
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+              <Loader2Icon className="size-6 animate-spin mb-2" />
+              <p className="text-sm">Searching users...</p>
+            </div>
+          ) : !searchQuery.trim() ? (
+            <div className="flex flex-col items-center justify-center px-4 py-12 text-center text-muted-foreground">
+              <p className="text-sm font-semibold mb-1">Find Users by Email</p>
+              <p className="text-xs max-w-[220px]">
+                Enter their email address to start messaging them.
+              </p>
+            </div>
+          ) : searchedUsersList.length === 0 ? (
+            <p className="px-4 py-6 text-center text-sm text-muted-foreground">No people match your search.</p>
           ) : (
-            filteredUsers.map((user) => (
+            searchedUsersList.map((user) => (
               <ConversationRow
                 key={user.conversationId}
                 user={user}
                 selected={user.conversationId === activeConversationId}
-                onSelect={() => setActiveConversationId(user.conversationId)}
+                onSelect={() => {
+                  setActiveConversationId(user.conversationId);
+                  setSidebarTab("chats");
+                  setSearchQuery("");
+                }}
               />
             ))
           )}

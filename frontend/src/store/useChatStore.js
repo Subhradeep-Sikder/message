@@ -21,6 +21,8 @@ export const useChatStore = create(
       composerText: "",
       isSoundEnabled: true,
       isSendingMedia: false,
+      searchResults: [],
+      isSearching: false,
 
       getUsers: async () => {
         set({ isUsersLoading: true });
@@ -37,6 +39,23 @@ export const useChatStore = create(
           console.log("Error in get Users", error.message);
         } finally {
           set({ isUsersLoading: false });
+        }
+      },
+
+      searchUsers: async (query) => {
+        if (!query.trim()) {
+          set({ searchResults: [] });
+          return;
+        }
+        set({ isSearching: true });
+        try {
+          const res = await axiosInstance.get(`/messages/search?query=${query}`);
+          set({ searchResults: res.data });
+        } catch (error) {
+          console.log("Error in searchUsers", error.message);
+          toast.error("Failed to search users");
+        } finally {
+          set({ isSearching: false });
         }
       },
 

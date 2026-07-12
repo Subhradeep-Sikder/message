@@ -4,7 +4,8 @@ import {
     getUsersForSidebar, 
     getConversationsForSidebar, 
     getMessages,
-    sendMessage
+    sendMessage,
+    searchUsers
 } from "../controllers/message.controller.js";
 import { upload } from "../middleware/upload.middleware.js";
 
@@ -13,6 +14,7 @@ const router = express.Router();
 router.use(protectRoute);
 router.get("/users", getUsersForSidebar);
 router.get("/conversations", getConversationsForSidebar);
+router.get("/search", searchUsers);
 router.get("/:id", getMessages);
 router.post("/send/:id",upload.single("media"), sendMessage); // frontend will send the media file in the request body with the key "media"
 

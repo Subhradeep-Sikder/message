@@ -24,13 +24,13 @@ io.on("connection", (socket) => {
         userSocketMap[userId] = socket.id;
     }
 
-    io.emmit("getOnlineUsers", Object.keys(userSocketMap));
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     socket.on("disconnect", () => {
         if (userId) {
             delete userSocketMap[userId];
         }
-        io.emmit("getOnlineUsers", Object.keys(userSocketMap));
+        io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     });
 

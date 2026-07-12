@@ -13,7 +13,9 @@ export function ConversationRow({ user, selected, onSelect }) {
       <AvatarWithOnlineIndicator isOnline={user.isOnline ?? true}>
         <Avatar className="size-12 shrink-0">
           <Avatar.Image alt={user.name} src={user.avatarUrl} />
-          <Avatar.Fallback className="text-sm font-medium">{user.initials}</Avatar.Fallback>
+          <Avatar.Fallback className="text-sm font-medium">
+            {user.initials}
+          </Avatar.Fallback>
         </Avatar>
       </AvatarWithOnlineIndicator>
 

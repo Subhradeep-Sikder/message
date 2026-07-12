@@ -28,11 +28,13 @@ export const useChatStore = create(
         set({ isUsersLoading: true });
         try {
           const res = await axiosInstance.get("/messages/users");
-          const usersList = res.data?.users || (Array.isArray(res.data) ? res.data : []);
+          const usersList =
+            res.data?.users || (Array.isArray(res.data) ? res.data : []);
           set((state) => ({
             users: usersList,
             selectedUser:
-              state.selectedUser && usersList.some((user) => user._id === state.selectedUser._id)
+              state.selectedUser &&
+              usersList.some((user) => user._id === state.selectedUser._id)
                 ? state.selectedUser
                 : null,
           }));
@@ -50,7 +52,9 @@ export const useChatStore = create(
         }
         set({ isSearching: true });
         try {
-          const res = await axiosInstance.get(`/messages/search?query=${query}`);
+          const res = await axiosInstance.get(
+            `/messages/search?query=${query}`,
+          );
           set({ searchResults: res.data });
         } catch (error) {
           console.log("Error in searchUsers", error.message);
@@ -79,7 +83,9 @@ export const useChatStore = create(
           const res = await axiosInstance.get(`/messages/${userId}`);
           set({ messages: res.data });
         } catch (error) {
-          toast.error(error.response?.data?.message || "Failed to load messages");
+          toast.error(
+            error.response?.data?.message || "Failed to load messages",
+          );
         } finally {
           set({ isMessagesLoading: false });
         }
@@ -90,12 +96,17 @@ export const useChatStore = create(
         if (!selectedUser) return false;
 
         try {
-          const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
+          const res = await axiosInstance.post(
+            `/messages/send/${selectedUser._id}`,
+            messageData,
+          );
           set({ messages: [...messages, res.data], composerText: "" });
           get().getConversations();
           return true;
         } catch (error) {
-          toast.error(error.response?.data?.message || "Failed to send message");
+          toast.error(
+            error.response?.data?.message || "Failed to send message",
+          );
           return false;
         }
       },
@@ -128,9 +139,15 @@ export const useChatStore = create(
         set((state) => ({
           activeConversationId,
           selectedUser:
-            (Array.isArray(state.users) ? state.users.find((user) => user._id === activeConversationId) : null) ||
-            state.conversations.find((user) => user._id === activeConversationId) ||
-            state.searchResults.find((user) => user._id === activeConversationId) ||
+            (Array.isArray(state.users)
+              ? state.users.find((user) => user._id === activeConversationId)
+              : null) ||
+            state.conversations.find(
+              (user) => user._id === activeConversationId,
+            ) ||
+            state.searchResults.find(
+              (user) => user._id === activeConversationId,
+            ) ||
             null,
           messages: activeConversationId ? state.messages : [],
         }));

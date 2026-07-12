@@ -13,7 +13,9 @@ import { useSelectedConversation } from "../../hooks/useSelectedConversation";
 
 export function ChatHeader() {
   const isSoundEnabled = useChatStore((state) => state.isSoundEnabled);
-  const setActiveConversationId = useChatStore((state) => state.setActiveConversationId);
+  const setActiveConversationId = useChatStore(
+    (state) => state.setActiveConversationId,
+  );
   const setSoundEnabled = useChatStore((state) => state.setSoundEnabled);
 
   const { activeConversation, isLargeScreen } = useSelectedConversation();
@@ -34,7 +36,9 @@ export function ChatHeader() {
 
       {activeConversation ? (
         <>
-          <AvatarWithOnlineIndicator isOnline={activeConversation.peer.isOnline ?? true}>
+          <AvatarWithOnlineIndicator
+            isOnline={activeConversation.peer.isOnline ?? true}
+          >
             <Avatar className="size-9 shrink-0">
               <Avatar.Image
                 alt={activeConversation.peer.name}
@@ -63,7 +67,9 @@ export function ChatHeader() {
         <div className="flex flex-1 items-center gap-2.5 sm:text-left">
           <AppLogo size={36} className="rounded-[9px]" />
           <div className="flex-1 text-center sm:text-left">
-            <p className="truncate text-[13px] font-medium text-muted">Select a conversation</p>
+            <p className="truncate text-[13px] font-medium text-muted">
+              Select a conversation
+            </p>
           </div>
         </div>
       )}

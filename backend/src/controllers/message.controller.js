@@ -5,43 +5,57 @@ import { getReceiverSocketId, io } from "../lib/socket.js";
 import mongoose from "mongoose";
 
 export async function getUsersForSidebar(req, res) {
-    try{
-        const loggedInUserId = req.user._id;
+  try {
+    const loggedInUserId = req.user._id;
 
-        const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-clerkId");
+    const filteredUsers = await User.find({
+      _id: { $ne: loggedInUserId },
+    }).select("-clerkId");
 
-        res.status(200).json({ users: filteredUsers });
-    }
-    catch(error){
-        console.error("Error fetching users for sidebar:", error.message);
-        res.status(500).json({ error: "Internal server error" });
-    }
-
+    res.status(200).json({ users: filteredUsers });
+  } catch (error) {
+    console.error("Error fetching users for sidebar:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
 }
-
-
 
 export async function getConversationsForSidebar(req, res) {
   try {
     const loggedInUserId = req.user._id;
 
     const conversations = await Message.aggregate([
-      { $match: { $or: [{ senderId: loggedInUserId }, { receiverId: loggedInUserId }] } },
+      {
+        $match: {
+          $or: [{ senderId: loggedInUserId }, { receiverId: loggedInUserId }],
+        },
+      },
 
       {
         $group: {
-          
-          _id: { $cond: [{ $eq: ["$senderId", loggedInUserId] }, "$receiverId", "$senderId"] },
+          _id: {
+            $cond: [
+              { $eq: ["$senderId", loggedInUserId] },
+              "$receiverId",
+              "$senderId",
+            ],
+          },
           lastMessageAt: { $max: "$createdAt" },
         },
       },
-      
+
       { $sort: { lastMessageAt: -1 } },
-      
-      { $lookup: { from: "users", localField: "_id", foreignField: "_id", as: "user" } },
-      
+
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+
       { $replaceRoot: { newRoot: { $first: "$user" } } },
-      
+
       { $project: { clerkId: 0 } },
     ]);
 
@@ -71,7 +85,6 @@ export async function getMessages(req, res) {
   }
 }
 
-
 export async function sendMessage(req, res) {
   try {
     const { text } = req.body;
@@ -83,7 +96,9 @@ export async function sendMessage(req, res) {
 
     if (req.file) {
       if (!hasImageKitConfig()) {
-        return res.status(500).json({ message: "Media upload is not configured" });
+        return res
+          .status(500)
+          .json({ message: "Media upload is not configured" });
       }
 
       const url = await uploadChatMedia(req.file);
@@ -101,10 +116,10 @@ export async function sendMessage(req, res) {
 
     await newMessage.save();
 
-   const receiverSocketId = getReceiverSocketId(receiverId);
+    const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
-     io.to(receiverSocketId).emit("newMessage", newMessage);
-   }
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
 
     res.status(201).json(newMessage);
   } catch (error) {
@@ -122,10 +137,10 @@ export async function searchUsers(req, res) {
 
     const loggedInUserId = req.user._id;
 
-    // Find the user by exact email match (case-insensitive) excluding the logged-in user
+    // find user by email, excluding self
     const users = await User.find({
       _id: { $ne: loggedInUserId },
-      email: query.trim().toLowerCase()
+      email: query.trim().toLowerCase(),
     }).select("-clerkId");
 
     res.status(200).json(users);

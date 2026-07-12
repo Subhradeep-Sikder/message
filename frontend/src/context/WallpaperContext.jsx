@@ -27,7 +27,9 @@ export function WallpaperProvider({ children }) {
   const frameStyle = frameStyleFromUrl(wallpaper.url);
 
   return (
-    <WallpaperContext.Provider value={{ wallpaperId, setWallpaperId, wallpaper, frameStyle }}>
+    <WallpaperContext.Provider
+      value={{ wallpaperId, setWallpaperId, wallpaper, frameStyle }}
+    >
       {children}
     </WallpaperContext.Provider>
   );

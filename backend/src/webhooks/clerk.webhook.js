@@ -13,7 +13,9 @@ router.post("/", async (req, res) => {
     }
 
     // clerk's verifier expects a Web Request with the raw body; express.raw gives a Buffer.
-    const payload = Buffer.isBuffer(req.body) ? req.body.toString("utf8") : String(req.body);
+    const payload = Buffer.isBuffer(req.body)
+      ? req.body.toString("utf8")
+      : String(req.body);
     const request = new Request("http://internal/webhooks/clerk", {
       method: "POST",
       headers: new Headers(req.headers),
@@ -27,11 +29,13 @@ router.post("/", async (req, res) => {
       const u = evt.data;
 
       const email =
-        u.email_addresses?.find((e) => e.id === u.primary_email_address_id)?.email_address ??
-        u.email_addresses?.[0]?.email_address;
+        u.email_addresses?.find((e) => e.id === u.primary_email_address_id)
+          ?.email_address ?? u.email_addresses?.[0]?.email_address;
 
       const fullName =
-        [u.first_name, u.last_name].filter(Boolean).join(" ") || u.username || email?.split("@")[0];
+        [u.first_name, u.last_name].filter(Boolean).join(" ") ||
+        u.username ||
+        email?.split("@")[0];
 
       await User.findOneAndUpdate(
         { clerkId: u.id },
@@ -45,9 +49,7 @@ router.post("/", async (req, res) => {
     }
 
     res.status(200).json({ received: true });
-  } 
-  
-  catch (error) {
+  } catch (error) {
     console.error("Error in Clerk webhook:", error);
     res.status(400).json({ message: "Webhook verification failed" });
   }

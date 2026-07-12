@@ -16,7 +16,12 @@ export function ThemePresetPicker() {
   return (
     <Modal.Root state={modal}>
       <Modal.Trigger>
-        <Button variant="ghost" size="sm" isIconOnly className="text-foreground">
+        <Button
+          variant="ghost"
+          size="sm"
+          isIconOnly
+          className="text-foreground"
+        >
           <Palette className="size-5" />
         </Button>
       </Modal.Trigger>
@@ -33,7 +38,8 @@ export function ThemePresetPicker() {
 
             <Modal.Body className="isolate pt-4">
               <p className="mb-4 text-sm text-zinc-400">
-                HeroUI components use the accent color for primary actions and focus.
+                HeroUI components use the accent color for primary actions and
+                focus.
               </p>
               <div className="grid grid-cols-3 gap-4 sm:grid-cols-4">
                 {HERO_UI_THEME_PRESETS.map((p) => {

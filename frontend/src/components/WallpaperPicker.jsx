@@ -58,7 +58,12 @@ export function WallpaperPicker() {
   return (
     <Modal.Root state={modal}>
       <Modal.Trigger>
-        <Button variant="ghost" size="sm" isIconOnly className="text-foreground">
+        <Button
+          variant="ghost"
+          size="sm"
+          isIconOnly
+          className="text-foreground"
+        >
           <ImageIcon className="size-5" />
         </Button>
       </Modal.Trigger>
@@ -76,16 +81,20 @@ export function WallpaperPicker() {
             <Modal.Body className="isolate space-y-8 pt-4">
               {WALLPAPER_SECTIONS.map((section) => (
                 <section key={section.id} className="space-y-3">
-                  <h3 className="text-sm font-medium text-zinc-400">{section.title}</h3>
+                  <h3 className="text-sm font-medium text-zinc-400">
+                    {section.title}
+                  </h3>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                    {WALLPAPERS.filter((w) => w.category === section.id).map((w) => (
-                      <WallpaperThumb
-                        key={w.id}
-                        wallpaper={w}
-                        selected={wallpaperId === w.id}
-                        onSelect={handleSelect}
-                      />
-                    ))}
+                    {WALLPAPERS.filter((w) => w.category === section.id).map(
+                      (w) => (
+                        <WallpaperThumb
+                          key={w.id}
+                          wallpaper={w}
+                          selected={wallpaperId === w.id}
+                          onSelect={handleSelect}
+                        />
+                      ),
+                    )}
                   </div>
                 </section>
               ))}

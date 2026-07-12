@@ -12,12 +12,7 @@ export function getInitials(name) {
     .join("");
 }
 
-// mapUserToConversation is an adapter — it converts the raw backend shapes (a user document + an array of message documents) into the clean view-model that the chat UI components expect to render.
-
-// Two transformations happen:
-// 1. Messages → UI messages
-// 2. User → peer
-
+// convert DB shape to UI view-model
 function mapUserToConversation({ user, messages, authUser, onlineUsers }) {
   const mappedMessages = messages.map((message) => ({
     id: message._id,
@@ -42,7 +37,9 @@ function mapUserToConversation({ user, messages, authUser, onlineUsers }) {
 }
 
 export function useSelectedConversation() {
-  const activeConversationId = useChatStore((state) => state.activeConversationId);
+  const activeConversationId = useChatStore(
+    (state) => state.activeConversationId,
+  );
   const conversations = useChatStore((state) => state.conversations);
   const users = useChatStore((state) => state.users);
   const searchResults = useChatStore((state) => state.searchResults);
@@ -54,14 +51,21 @@ export function useSelectedConversation() {
   const isLargeScreen = useMediaQuery("(min-width: 1024px)");
 
   const selectedUser = activeConversationId
-    ? (Array.isArray(users) ? users.find((user) => user._id === activeConversationId) : null) ||
+    ? (Array.isArray(users)
+        ? users.find((user) => user._id === activeConversationId)
+        : null) ||
       conversations.find((user) => user._id === activeConversationId) ||
       searchResults.find((user) => user._id === activeConversationId) ||
       null
     : null;
 
   const activeConversation = selectedUser
-    ? mapUserToConversation({ user: selectedUser, messages, authUser, onlineUsers })
+    ? mapUserToConversation({
+        user: selectedUser,
+        messages,
+        authUser,
+        onlineUsers,
+      })
     : null;
 
   return {

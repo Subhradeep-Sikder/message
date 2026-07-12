@@ -14,7 +14,8 @@ export function NoConversationPlaceholder() {
           Select a chat to start
         </h2>
         <p className="text-[13px] leading-relaxed text-muted">
-          Pick a conversation from the list on the left to read messages and reply.
+          Pick a conversation from the list on the left to read messages and
+          reply.
         </p>
       </div>
     </div>

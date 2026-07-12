@@ -91,7 +91,12 @@ export function ChatComposer() {
           className="flex-1 rounded-full"
         />
 
-        <Button variant="primary" isIconOnly isDisabled={!composerText.trim()} onPress={handleSend}>
+        <Button
+          variant="primary"
+          isIconOnly
+          isDisabled={!composerText.trim()}
+          onPress={handleSend}
+        >
           <SendHorizontalIcon className="size-5" />
         </Button>
       </div>

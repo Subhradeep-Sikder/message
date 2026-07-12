@@ -1,10 +1,16 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { DEFAULT_THEME_PRESET_ID } from "../data/herouiThemePresets";
-import { applyThemePresetToDocument, isValidThemePreset, ThemeContext } from "./theme";
+import {
+  applyThemePresetToDocument,
+  isValidThemePreset,
+  ThemeContext,
+} from "./theme";
 
 function getSystemTheme() {
   if (typeof window === "undefined") return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 }
 
 function readStoredTheme() {
@@ -28,7 +34,9 @@ function readStoredThemePreset() {
 }
 
 export function ThemeProvider({ children }) {
-  const [theme, setThemeState] = useState(() => readStoredTheme() ?? getSystemTheme());
+  const [theme, setThemeState] = useState(
+    () => readStoredTheme() ?? getSystemTheme(),
+  );
   const [themePreset, setThemePresetState] = useState(readStoredThemePreset);
 
   // this applies light/dark mode
@@ -62,5 +70,7 @@ export function ThemeProvider({ children }) {
 
   const value = { theme, setTheme, toggleTheme, themePreset, setThemePreset };
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
 }

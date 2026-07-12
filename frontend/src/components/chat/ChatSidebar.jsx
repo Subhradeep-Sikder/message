@@ -1,4 +1,7 @@
-import { getInitials, useSelectedConversation } from "../../hooks/useSelectedConversation";
+import {
+  getInitials,
+  useSelectedConversation,
+} from "../../hooks/useSelectedConversation";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useChatStore } from "../../store/useChatStore";
 import { APP_NAME, AppLogo } from "../AppLogo";
@@ -30,7 +33,6 @@ function mapUserForList(user, onlineUsers) {
 function ChatSidebar() {
   const conversations = useChatStore((state) => state.conversations);
 
-  console.log(conversations);
   const users = useChatStore((state) => state.users);
 
   const searchQuery = useChatStore((state) => state.searchQuery);
@@ -39,7 +41,9 @@ function ChatSidebar() {
   const sidebarTab = useChatStore((state) => state.sidebarTab);
   const setSidebarTab = useChatStore((state) => state.setSidebarTab);
 
-  const setActiveConversationId = useChatStore((state) => state.setActiveConversationId);
+  const setActiveConversationId = useChatStore(
+    (state) => state.setActiveConversationId,
+  );
 
   const onlineUsers = useAuthStore((state) => state.onlineUsers);
   const authUser = useAuthStore((state) => state.authUser);
@@ -62,8 +66,12 @@ function ChatSidebar() {
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
 
-  const conversationUsers = conversations.map((user) => mapUserForList(user, onlineUsers));
-  const searchedUsersList = searchResults.map((user) => mapUserForList(user, onlineUsers));
+  const conversationUsers = conversations.map((user) =>
+    mapUserForList(user, onlineUsers),
+  );
+  const searchedUsersList = searchResults.map((user) =>
+    mapUserForList(user, onlineUsers),
+  );
 
   const filteredConversations = normalizedSearchQuery
     ? conversationUsers.filter((conversation) =>
@@ -79,7 +87,11 @@ function ChatSidebar() {
     >
       <div className="shrink-0 border-b border-border px-2 pb-2.5 pt-2.5 sm:px-3 sm:pt-3">
         <div className="flex items-center gap-2 px-0.5 sm:gap-2.5 sm:px-1">
-          <AppLogo size={32} className="size-8 shrink-0 rounded-[9px] sm:size-8.5" alt="" />
+          <AppLogo
+            size={32}
+            className="size-8 shrink-0 rounded-[9px] sm:size-8.5"
+            alt=""
+          />
           <p className="flex-1 truncate text-lg font-bold tracking-tight sm:text-[22px]">
             {APP_NAME}
           </p>
@@ -148,7 +160,10 @@ function ChatSidebar() {
           )}
         </Tabs.Panel>
 
-        <Tabs.Panel id="users" className="flex-1 overflow-x-hidden overflow-y-auto outline-none">
+        <Tabs.Panel
+          id="users"
+          className="flex-1 overflow-x-hidden overflow-y-auto outline-none"
+        >
           {isSearching ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Loader2Icon className="size-6 animate-spin mb-2" />
@@ -162,7 +177,9 @@ function ChatSidebar() {
               </p>
             </div>
           ) : searchedUsersList.length === 0 ? (
-            <p className="px-4 py-6 text-center text-sm text-muted-foreground">No people match your search.</p>
+            <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+              No people match your search.
+            </p>
           ) : (
             searchedUsersList.map((user) => (
               <ConversationRow

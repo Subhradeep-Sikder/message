@@ -1,11 +1,11 @@
-import express from 'express';  
+import express from "express";
 import { protectRoute } from "../middleware/auth.middleware.js";
-import { 
-    getUsersForSidebar, 
-    getConversationsForSidebar, 
-    getMessages,
-    sendMessage,
-    searchUsers
+import {
+  getUsersForSidebar,
+  getConversationsForSidebar,
+  getMessages,
+  sendMessage,
+  searchUsers,
 } from "../controllers/message.controller.js";
 import { upload } from "../middleware/upload.middleware.js";
 
@@ -16,6 +16,6 @@ router.get("/users", getUsersForSidebar);
 router.get("/conversations", getConversationsForSidebar);
 router.get("/search", searchUsers);
 router.get("/:id", getMessages);
-router.post("/send/:id",upload.single("media"), sendMessage); // frontend will send the media file in the request body with the key "media"
+router.post("/send/:id", upload.single("media"), sendMessage); // frontend will send the media file in the request body with the key "media"
 
 export default router;

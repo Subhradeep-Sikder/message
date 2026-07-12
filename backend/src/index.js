@@ -1,7 +1,7 @@
 import express from "express";
 import "dotenv/config";
-import { clerkMiddleware } from '@clerk/express'
-import {connectDB} from "./lib/db.js";
+import { clerkMiddleware } from "@clerk/express";
+import { connectDB } from "./lib/db.js";
 import cors from "cors";
 import fs from "fs";
 import path from "path";
@@ -9,54 +9,45 @@ import job from "./lib/cron.js";
 import clerkWebhook from "./webhooks/clerk.webhook.js";
 import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
-import {app, server} from "./lib/socket.js";
-
-
+import { app, server } from "./lib/socket.js";
 
 const PORT = process.env.PORT;
 const FRONTEND_URL = process.env.FRONTEND_URL;
 const publicDir = path.join(process.cwd(), "public");
 
-
-app.use("/api/webhooks/clerk",express.raw({type: "application/json"}),express.json(),clerkWebhook);
+app.use(
+  "/api/webhooks/clerk",
+  express.raw({ type: "application/json" }),
+  express.json(),
+  clerkWebhook,
+);
 app.use(express.json());
-app.use(cors({origin:FRONTEND_URL, credentials:true}));
+app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(clerkMiddleware());
 
 //routes
 app.get("/health", (req, res) => {
-    res.status(200).json({ok:true})
+  res.status(200).json({ ok: true });
 });
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-
-
-
-
-
-
-
-
-
 //for production build
-if ( fs.existsSync(publicDir)) {
-    app.use(express.static(publicDir));
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir));
 
-    app.get("/{*any}", (req,res,next) => {
-    res.sendFile(path.join(publicDir, "index.html"),(err) => next(err));
- });
+  app.get("/{*any}", (req, res, next) => {
+    res.sendFile(path.join(publicDir, "index.html"), (err) => next(err));
+  });
 }
 
-
 server.listen(PORT, () => {
-    connectDB();
-    console.log(`Server is running on port ${PORT}`);
+  connectDB();
+  console.log(`Server is running on port ${PORT}`);
 
-    //for running cron job to send GET request to health endpoint every 14 minutes
-    if(process.env.NODE_ENV === "production"){
-        job.start()
-    }
+  //for running cron job to send GET request to health endpoint every 14 minutes
+  if (process.env.NODE_ENV === "production") {
+    job.start();
+  }
 });
-

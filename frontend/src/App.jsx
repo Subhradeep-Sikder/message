@@ -13,7 +13,6 @@ import { Toaster } from "react-hot-toast";
 function App() {
   const { isSignedIn, isLoaded } = useAuth();
 
-
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const isCheckingAuth = useAuthStore((state) => state.isCheckingAuth);
@@ -31,7 +30,12 @@ function App() {
     <ThemeProvider>
       <WallpaperProvider>
         <Routes>
-          <Route path="/" element={isSignedIn ? <ChatPage /> : <Navigate to={"/auth"} replace />} />
+          <Route
+            path="/"
+            element={
+              isSignedIn ? <ChatPage /> : <Navigate to={"/auth"} replace />
+            }
+          />
           <Route
             path="/auth"
             element={!isSignedIn ? <AuthPage /> : <Navigate to={"/"} replace />}

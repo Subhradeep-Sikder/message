@@ -28,10 +28,11 @@ export const useChatStore = create(
         set({ isUsersLoading: true });
         try {
           const res = await axiosInstance.get("/messages/users");
+          const usersList = res.data?.users || (Array.isArray(res.data) ? res.data : []);
           set((state) => ({
-            users: res.data,
+            users: usersList,
             selectedUser:
-              state.selectedUser && res.data.some((user) => user._id === state.selectedUser._id)
+              state.selectedUser && usersList.some((user) => user._id === state.selectedUser._id)
                 ? state.selectedUser
                 : null,
           }));
@@ -127,8 +128,9 @@ export const useChatStore = create(
         set((state) => ({
           activeConversationId,
           selectedUser:
-            state.users.find((user) => user._id === activeConversationId) ||
+            (Array.isArray(state.users) ? state.users.find((user) => user._id === activeConversationId) : null) ||
             state.conversations.find((user) => user._id === activeConversationId) ||
+            state.searchResults.find((user) => user._id === activeConversationId) ||
             null,
           messages: activeConversationId ? state.messages : [],
         }));

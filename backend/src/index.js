@@ -48,6 +48,6 @@ server.listen(PORT, () => {
 
   //for running cron job to send GET request to health endpoint every 14 minutes
   if (process.env.NODE_ENV === "production") {
-    job.start();
+    //job.start();
   }
 });
